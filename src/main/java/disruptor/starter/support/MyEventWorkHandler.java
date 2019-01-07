@@ -3,9 +3,9 @@ package disruptor.starter.support;
 import com.lmax.disruptor.WorkHandler;
 
 /**
- * Created by hupeng on 2015/1/1.
+ * @author ding
  */
-public class MyEventWorkHandler implements WorkHandler<MyEvent> {
+public class MyEventWorkHandler implements WorkHandler<DisruptorEvent> {
 
     private String workerName;
 
@@ -14,7 +14,7 @@ public class MyEventWorkHandler implements WorkHandler<MyEvent> {
     }
 
     @Override
-    public void onEvent(MyEvent event) throws Exception {
+    public void onEvent(DisruptorEvent event) throws Exception {
         System.out.println(workerName + " handle event:" + event);
     }
 }

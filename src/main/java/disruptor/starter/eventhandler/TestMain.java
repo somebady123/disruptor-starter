@@ -11,13 +11,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+
 /**
- * Created by hupeng on 2015/1/1.
+ * @author ding
  */
-public class MyEventMain {
+public class TestMain {
 
     /**
-     *output:
+     * output:
      * MyEvent{value=0}
      * MyEvent{value=0}
      * MyEvent{value=1}
@@ -38,26 +39,45 @@ public class MyEventMain {
      * MyEvent{value=8}
      * MyEvent{value=9}
      * MyEvent{value=9}
-     *
+     * <p>
      * one msg processed by all the handler..
      */
     public static void main(String[] args) throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
 
+        /**
+         * 构建Disruptor 参数
+         */
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         int bufferSize = 1024;
 
-        Disruptor<MyEvent> disruptor = new Disruptor<MyEvent>(new MyEventFactory(),
-                bufferSize, executorService, ProducerType.SINGLE, new YieldingWaitStrategy());
+        /**
+         * 初始化Disruptor
+         */
+        Disruptor<DisruptorEvent> disruptor = new Disruptor<DisruptorEvent>(new MyEventFactory(), bufferSize, executorService, ProducerType.SINGLE, new YieldingWaitStrategy());
+        /**
+         * 注册事件处理器，可放多个
+         */
+        disruptor.handleEventsWith(new MyEventHandler(), new MyEventHandler());
+        /**
+         * 注册事件处理器（Pipeline）
+         */
+//        disruptor.handleEventsWith(new MyEventHandler()).then(new MyEventHandler());
+
+        /**
+         * 注册异常处理器
+         */
         disruptor.handleExceptionsWith(new IgnoreExceptionHandler());
 
-        disruptor.handleEventsWith(new MyEventHandler(),new MyEventHandler());
-//        disruptor.handleEventsWith(new MyEventHandler()).then(new MyEventHandler());  //Pipeline
-        RingBuffer<MyEvent> ringBuffer = disruptor.start();
+        /**
+         * start
+         */
+        RingBuffer<DisruptorEvent> ringBuffer = disruptor.start();
 
         MyEventProducer producer = new MyEventProducer(ringBuffer);
         for (long i = 0; i < 10; i++) {
             producer.onData(i);
-            Thread.sleep(1000);// wait for task execute....
+            // wait for task execute....
+            Thread.sleep(1000);
         }
 
         disruptor.shutdown();

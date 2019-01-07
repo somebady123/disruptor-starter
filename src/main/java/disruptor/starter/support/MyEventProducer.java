@@ -4,25 +4,31 @@ import com.lmax.disruptor.EventTranslatorOneArg;
 import com.lmax.disruptor.RingBuffer;
 
 /**
- * Created by hupeng on 2015/1/1.
+ * 事件生产者
+ *
+ * @author ding
  */
 public class MyEventProducer {
 
-    private RingBuffer<MyEvent> ringBuffer;
+    private RingBuffer<DisruptorEvent> ringBuffer;
 
-    public MyEventProducer(RingBuffer<MyEvent> ringBuffer) {
+    public MyEventProducer(RingBuffer<DisruptorEvent> ringBuffer) {
         this.ringBuffer = ringBuffer;
     }
 
-    private static final EventTranslatorOneArg TRANSLATOR = new EventTranslatorOneArg<MyEvent, Long>() {
-
+    /**
+     * 定义事件转换器
+     * 定义事件的源头，里面的事件转换器（EventTranslatorOneArg）会把输出的参数转为我们的事件类型
+     */
+    private static final EventTranslatorOneArg TRANSLATOR = new EventTranslatorOneArg<DisruptorEvent, Long>() {
         @Override
-        public void translateTo(MyEvent event, long sequence, Long value) {
+        public void translateTo(DisruptorEvent event, long sequence, Long value) {
             event.setValue(value);
         }
     };
-    
+
     public void onData(final Long value) {
-        ringBuffer.publishEvent(TRANSLATOR,value);
+        System.out.println("生产者打印：" + value);
+        ringBuffer.publishEvent(TRANSLATOR, value);
     }
 }

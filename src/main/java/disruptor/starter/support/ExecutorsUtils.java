@@ -4,19 +4,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by hupeng on 2015/1/1.
+ * @author ding
  */
 public class ExecutorsUtils {
 
-    public static  void shutdownAndAwaitTermination(ExecutorService pool,int timeout,TimeUnit unit) {
-        pool.shutdown(); // Disable new tasks from being submitted
+    public static void shutdownAndAwaitTermination(ExecutorService pool, int timeout, TimeUnit unit) {
+        // Disable new tasks from being submitted
+        pool.shutdown();
         try {
             // Wait a while for existing tasks to terminate
-            if (!pool.awaitTermination(timeout/2, unit)) {
-                pool.shutdownNow(); // Cancel currently executing tasks
+            if (!pool.awaitTermination(timeout / 2, unit)) {
+                // Cancel currently executing tasks
+                pool.shutdownNow();
                 // Wait a while for tasks to respond to being cancelled
-                if (!pool.awaitTermination(timeout/2, unit))
+                if (!pool.awaitTermination(timeout / 2, unit)) {
                     System.err.println("Pool did not terminate");
+                }
             }
         } catch (InterruptedException ie) {
             // (Re-)Cancel if current thread also interrupted

@@ -2,12 +2,14 @@ package disruptor.starter.support;
 
 import com.lmax.disruptor.EventHandler;
 
+
 /**
- * Created by hupeng on 2015/1/1.
+ * @author ding
  */
-public class MyEventHandler implements EventHandler<MyEvent> {
+public class MyEventHandler implements EventHandler<DisruptorEvent> {
+
     @Override
-    public void onEvent(MyEvent event, long sequence, boolean endOfBatch) throws Exception {
-        System.out.println(event);
+    public void onEvent(DisruptorEvent event, long sequence, boolean endOfBatch) throws Exception {
+        System.out.println("消费者输出打印：" + event);
     }
 }

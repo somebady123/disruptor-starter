@@ -11,8 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+
 /**
- * Created by hupeng on 2015/1/1.
+ * @author ding
  */
 public class WorkerPoolStarter {
     /**
@@ -34,16 +35,16 @@ public class WorkerPoolStarter {
 
         int bufferSize = 1024;
 
-        Disruptor<MyEvent> disruptor = new Disruptor<MyEvent>(new MyEventFactory(),
-                bufferSize, executorService, ProducerType.SINGLE, new YieldingWaitStrategy());
+        Disruptor<DisruptorEvent> disruptor = new Disruptor<DisruptorEvent>(new MyEventFactory(), bufferSize, executorService, ProducerType.SINGLE, new YieldingWaitStrategy());
         disruptor.handleExceptionsWith(new IgnoreExceptionHandler());
-        disruptor.handleEventsWithWorkerPool(new MyEventWorkHandler("worker-1"),new MyEventWorkHandler("worker-2"));
-        RingBuffer<MyEvent> ringBuffer = disruptor.start();
+        disruptor.handleEventsWithWorkerPool(new MyEventWorkHandler("worker-1"), new MyEventWorkHandler("worker-2"));
+        RingBuffer<DisruptorEvent> ringBuffer = disruptor.start();
 
         MyEventProducer producer = new MyEventProducer(ringBuffer);
         for (long i = 0; i < 10; i++) {
             producer.onData(i);
-            Thread.sleep(1000);// wait for task execute....
+            // wait for task execute....
+            Thread.sleep(1000);
         }
 
         disruptor.shutdown();

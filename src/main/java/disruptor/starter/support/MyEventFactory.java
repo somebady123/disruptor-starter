@@ -2,12 +2,15 @@ package disruptor.starter.support;
 
 import com.lmax.disruptor.EventFactory;
 
+
 /**
- * Created by hupeng on 2015/1/1.
+ * 初始化event factory
+ *
+ * @author ding
  */
-public class MyEventFactory implements EventFactory<MyEvent> {
+public class MyEventFactory implements EventFactory<DisruptorEvent> {
     @Override
-    public MyEvent newInstance() {
-        return new MyEvent();
+    public DisruptorEvent newInstance() {
+        return new DisruptorEvent();
     }
 }
